@@ -12,13 +12,13 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:kueckermann/CTX.git"
+    "url": "git+ssh://git@github.com:kueckermann/ctxjs.git"
   },
   "name": "ctxjs",
   "bugs": {
-    "url": "https://github.com/AwakenMyCity/CTX_Framework/issues"
+    "url": "https://github.com/kueckermann/ctxjs"
   },
-  "homepage": "https://github.com/AwakenMyCity/CTX_Framework#readme",
+  "homepage": "https://github.com/kueckermann/ctxjs#readme",
   "version": "3.0.0",
   "main": "index.js",
   "scripts": {
