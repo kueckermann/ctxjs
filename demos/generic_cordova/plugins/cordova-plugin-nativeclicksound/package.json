@@ -1,0 +1,77 @@
+{
+  "_from": "cordova-plugin-nativeclicksound",
+  "_id": "cordova-plugin-nativeclicksound@0.0.4",
+  "_inBundle": false,
+  "_integrity": "sha512-4I+qyWCOqi9eP0VpQQUaA0HTGLB0fnSBv3ESV+inVyz0slF2jhrP1RBJIMiBXRANHjEST0r84VgNY3WeRI0QPA==",
+  "_location": "/cordova-plugin-nativeclicksound",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-plugin-nativeclicksound",
+    "name": "cordova-plugin-nativeclicksound",
+    "escapedName": "cordova-plugin-nativeclicksound",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-nativeclicksound/-/cordova-plugin-nativeclicksound-0.0.4.tgz",
+  "_shasum": "48d8b189afac8e5226fe188ab3fb0498381e104f",
+  "_spec": "cordova-plugin-nativeclicksound",
+  "_where": "C:\\Users\\Kyle\\Projects\\CTX\\Framework\\test\\testApp",
+  "author": {
+    "name": "Matías Menich",
+    "email": "matimenich@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/MatiMenich/cordova-plugin-nativeClickSound/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-plugin-nativeclicksound",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "dependencies": {},
+  "deprecated": false,
+  "description": "Cordova plugin for getting native click sounds on android and ios",
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "homepage": "https://github.com/MatiMenich/cordova-plugin-nativeClickSound",
+  "keywords": [
+    "cordova",
+    "android",
+    "ios",
+    "native click",
+    "click",
+    "click sound",
+    "cordova plugin",
+    "download",
+    "install",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/MatiMenich/cordova-plugin-nativeClickSound/README.md"
+    }
+  ],
+  "name": "cordova-plugin-nativeclicksound",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatiMenich/cordova-plugin-nativeClickSound.git"
+  },
+  "version": "0.0.4"
+}

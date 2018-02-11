@@ -1,0 +1,15 @@
+<div ctx-map="page" class="popup-block">{{ if(pending){ }}
+    <div><img src="/public/assets/59cad8b4956fc00001827ffa_ico-alert_1.png" class="popup-img">
+        <h2 class="popup-heading">Waiting for approval</h2>
+        <p>The organizer has been notified of your registration. <br>You will be notified once the organizer has made a decision on your registration.</p>
+    </div>{{ } }}{{ if(!pending){ }}
+    <div><img src="/public/assets/59cad8b4956fc00001828000_ico-yay.png" class="popup-img">
+        <h2 class="popup-heading">You are signed up!</h2>
+        <p>We've emailed you all the details. </p>
+    </div>{{ } }}
+    <p>Make sure to download the VOMO app to get reminders and instant updates for this project. You'll also be able to check-in on the day of your project.</p>
+    <div class="popup-row"><a href="https://itunes.apple.com/us/app/vomo-app/id1260727773?mt=8" class="w-inline-block"><img src="/public/assets/59cad8b4956fc00001827fd2_Download_on_the_App_Store_Badge_US-UK_135x40.svg" class="download-button"></a><a href="https://play.google.com/store/apps/details?id=com.vomo.app&hl=en" class="w-inline-block"><img src="/public/assets/59cad8b4956fc00001827fcb_google-play-badge.png" class="download-button _2"></a></div>
+    <div class="popup-row">
+        <div class="share-text">Share</div><a id="join_share_facebook" class="social-link-block w-inline-block"><img src="/public/assets/59d8aaadbcf399000192b96a_003-social-media-1.svg"></a><a id="join_share_messenger" class="social-link-block w-inline-block"><img src="/public/assets/59d8aaad9215eb00015d254a_001-interface.svg"></a>
+        <a id="join_share_twitter" class="social-link-block w-inline-block"><img src="/public/assets/59d8aaadf56f1500013f7724_002-social-media.svg"></a>
+    </div><a class="button popup secondary w-button" onclick="APP.module.modal.close()">Close</a></div>

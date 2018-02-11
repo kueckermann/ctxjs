@@ -1,0 +1,20 @@
+<div ctx-map="template" class="timeslot {{> is_part }}">
+    <div class="timeslot-info">
+        <div class="dates-div">
+            <div class="timeslot-date">{{> date }}</div>
+            <div class="timeslot-time">{{> time }}</div>
+        </div>
+        <div class="timeslot-participants">{{> participants }}</div>
+    </div>
+    <div class="timeslot-options">
+        <div class="timeslot-pending">
+            <div>
+                <div class="timeslot-joined-text">Pending</div><a class="link small">Edit My Time</a></div>
+        </div>
+        <div class="timeslot-join"><a class="button green w-button">Join </a></div>
+        <div class="timeslot-edit">
+            <div>
+                <div class="timeslot-joined-text">Attending</div><a class="link small">Edit My Time</a></div>
+        </div>
+    </div>
+</div>

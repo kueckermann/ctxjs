@@ -1,0 +1,34 @@
+<style>
+    .demo-container{
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        top: 0;
+        opacity: 0;
+        transform: translate3d(0,100vh,0);
+        animation: open 500ms forwards;
+        animation-timing-function: cubic-bezier(.67,.02,.88,.75)
+        animation-delay: 100ms;
+    }
+
+    @keyframes open {
+        30%{
+            opacity: 1
+        }
+        100%{
+            opacity: 1;
+            /* top:0; */
+            transform: translate3d(0,0,0);
+        }
+    }
+</style>
+
+<div>
+    <div ctx-map="page" class="demo-container bg blured">
+        <div class="demo-content"><img src="./public/assets/5a7dbb50965b1e0001851c24_CTX_white.svg" class="image"><img src="./public/assets/5a7dd8e11735290001387ae5_59d3fef1f467ac0001bd98a655_tail-spin.svg" class="loader">
+            <div class="templates-wrapper"></div>
+            <div class="widget-button">
+                <div>Launch Widget</div>
+            </div>
+        </div>
+    </div>
+</div>

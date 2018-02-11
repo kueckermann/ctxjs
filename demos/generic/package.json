@@ -1,0 +1,18 @@
+{
+  "name": "generic",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "scripts": {
+    "chrome": "chrome.sh index.html",
+    "build": "build.sh",
+    "scrape": "ctx scrape http://generic-app-1aefab.webflow.io --verbose --asset-root=\".\""
+  },
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^2.7.1",
+    "fastclick": "^1.0.6",
+    "jquery": "^3.3.1",
+    "swiper": "^4.1.0"
+  }
+}

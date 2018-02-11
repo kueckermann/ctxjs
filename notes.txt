@@ -1,0 +1,3 @@
+var ix2 = Webflow.require('ix2')
+var state = ix2.store.getState()
+ix2.init(state.ixData)

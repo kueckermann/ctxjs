@@ -1,0 +1,18 @@
+<div ctx-map="page" class="popup-block">
+    <div>
+        <h2 class="popup-heading">Request A Demo</h2>
+    </div>
+    <div class="demo-request-form w-form">
+        <form id="demo_request_form" name="email-form-2" data-name="Email Form 2">
+            <p class="center">Leave your details and one of our representatives will be in contact.</p><label for="entity_type">Organization Type</label><select id="entity_type" name="entity_type" data-name="entity_type" required class="w-select"><option value="">Select one...</option><option value="nonprofit">Nonprofit</option><option value="faith">Faith Community</option><option value="business">Business</option><option value="government">Government</option><option value="education">Education</option><option value="other">Other</option></select>
+            <label for="entity_name">Organization Name</label><input type="text" class="w-input" maxlength="256" name="entity_name" data-name="entity_name" placeholder="Organization Name" id="entity_name" required><label for="entity_website">Organization Website</label>
+                <input type="text" class="w-input" maxlength="256" name="entity_website" data-name="entity_website" placeholder="Organization Website" id="entity_website">
+                    <div class="separator"></div><label for="contact_name">Contact Name</label><input type="text" class="w-input" maxlength="256" name="contact_name" data-name="contact_name" placeholder="Contact Name" id="contact_name" required><label for="contact_email">Contact Email</label>
+                    <input type="email" class="w-input" maxlength="256" name="contact_email" data-name="contact_email" placeholder="Contact Email" id="contact_email" required><label for="contact_phone">Contact Phone</label><input type="text" class="w-input" maxlength="256" name="contact_phone" data-name="contact_phone" placeholder="Contact Phone" id="contact_phone" required><input type="submit" value="Request Demo" class="button center w-button"></form>
+        <div id="demo_request_sent" class="demo-request-sent w-form-done">
+            <div>Thank you for your interest in VOMO. <br><br>One of our representatives will be in contact with you shortly.</div><a class="button popup secondary" onclick="APP.module.modal.close()">Close</a></div>
+        <div class="w-form-fail">
+            <div>Oops! Something went wrong while submitting the form.</div>
+        </div>
+    </div>
+</div>

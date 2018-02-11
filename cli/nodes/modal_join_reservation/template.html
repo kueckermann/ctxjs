@@ -1,0 +1,12 @@
+<div ctx-map="page" class="popup-block"><img src="/public/assets/59cad8b4956fc00001827fff_ico-confirm.png" class="popup-img">
+    <h2 id="join_name" class="popup-heading"></h2>
+    <div id="join_date" class="join-confirm-detail"></div>
+    <div id="join_time" class="join-confirm-detail"></div>
+    <div id="join_guests" class="join-confirm-detail"></div>
+    <div id="join_role" class="join-confirm-detail"></div>
+    <div class="popup-row">{{ if(!edit){ }}
+        <a id="join_confirm" class="button popup w-inline-block">
+            <div class="inline">Confirm</div>
+        </a>{{ } }}</div>
+    <div class="popup-row"><a id="join_edit" class="button popup secondary w-button">Edit</a>{{ if(edit){ }}<a id="join_leave" class="button popup secondary w-button">Cancel Reservation</a>{{ } }}</div>
+</div>

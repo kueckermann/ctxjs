@@ -1,0 +1,12 @@
+{
+  "name": "ctx-i8ln",
+  "version": "1.0.0",
+  "description": "Internationalization support for CTX services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kyle Ueckermann",
+  "license": "UNLICENSED",
+  "dependencies": {}
+}

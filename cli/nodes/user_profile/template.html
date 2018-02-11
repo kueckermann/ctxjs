@@ -1,0 +1,31 @@
+<div ctx-map="page" class="page-content">
+    <div class="title-section compact"></div>
+    <div class="section interior">
+        <div class="container w-container">
+            <div class="w-row">
+                <div class="w-col w-col-4 w-col-stack">
+                    <div class="sidebar-block profile">
+                        <div class="avatar xlarge" style="background-image:url({{> avatar }})"></div>
+                        <h2 class="profile-name">{{>user.full_name}}</h2>
+                        <div>{{> address }}</div>
+                    </div>
+                    <div class="sidebar-block w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny">
+                        <div class="infographic-div">
+                            <div class="infographic-block">
+                                <div id="projects_number" class="number-large">5</div>
+                                <div class="numbers-text">Projects</div>
+                            </div>
+                            <div class="infographic-block">
+                                <div id="projects_hour" class="number-large">14</div>
+                                <div class="numbers-text">Hours</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-col w-col-8 w-col-stack">
+                    <h3 id="profile_heading" class="profile-heading">John recently participated in these projects</h3>
+                    <div id="projects_container" class="project-list"></div><img src="/public/assets/59cae5f6e4dab000012d4e9f_logo.svg" id="loader" class="loader"><a data-ix="new-interaction" id="load_more" class="button load-more w-button">Load more</a></div>
+            </div>
+        </div>
+    </div>
+</div>

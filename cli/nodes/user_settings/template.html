@@ -1,0 +1,105 @@
+<div>
+    <div class="title-section compact">
+        <h1 class="page-header-content">User Settings</h1>
+    </div>
+    <div class="section">
+        <div class="container w-container">
+            <div class="w-row">
+                <div class="w-col w-col-6">
+                    <div>
+                        <h2>Profile Info</h2>
+                        <div class="profile-image-block">
+                            <div id="profile_avatar" class="avatar giant"></div><a id="profile_upload_avatar" class="button small grey w-button">Upload Profile Picture</a></div>
+                        <div class="w-form">
+                            <form id="data_form" name="email-form" data-name="Email Form">
+                                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc3f4f8560001c947ac_010-users.svg" class="form-icon"><input type="text" class="form-field w-input" maxlength="256" name="First-name" data-name="First Name" placeholder="First Name" id="first_name">
+                                    <input type="text" class="form-field w-input" maxlength="256" name="Last-Name" data-name="Last Name" placeholder="Last Name" id="last_name"></div>
+                                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc1e8bbc50001a41f78_001-present.svg" class="form-icon"><select id="month_select" name="Field-3" data-name="Field 3" class="form-field w-select"><option value="month">Month</option><option value="jan">January</option><option value="feb">February</option><option value="march">March</option><option value="april">April</option><option value="may">May</option><option value="June">June</option><option value="july">July</option><option value="aug">August</option><option value="sept">September</option><option value="oct">October</option><option value="nov">November</option><option value="dec">December</option></select>
+                                    <select id="day_select" name="Field-3" data-name="Field 3" class="form-field w-select">
+                                        <option value="date">Date</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        </select><select id="year_select" name="Field-3" data-name="Field 3" class="form-field w-select"><option value="year">Year</option><option value="1900">1900</option><option value="1950">1950</option><option value="2000">2000</option></select></div>
+                                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc1e8bbc50001a41f79_002-telephone.svg" class="form-icon"><input type="text" class="form-field w-input" maxlength="256" name="Phone" data-name="Phone" placeholder="Phone" id="phone"></div>
+                        <div class="form-field-block w-clearfix"><img src="/public/assets/59d67e540662d10001851e6e_002-location.svg" class="form-icon"><input type="text" class="form-field w-input" maxlength="256" name="address-2" data-name="Address 2" placeholder="Address" id="address_select"></div>
+                    <div id="address_results_container" class="div-block-8">
+                        <h6 class="heading-11">Select your address below</h6>
+                        <div id="address_results"></div>
+                </div>
+                <div class="form-field-block hide w-clearfix"><img src="/public/assets/59ea6cc3e8bbc50001a41f7a_009-twitter.svg" class="form-icon"><input type="text" class="form-field w-input" maxlength="256" name="Twitter" data-name="Twitter" placeholder="Twitter" id="twitter"></div>
+                <div class="form-field-block hide w-clearfix"><img src="/public/assets/59ea6cc2f4f8560001c947ab_007-instagram.svg" class="form-icon"><input type="text" class="form-field w-input" maxlength="256" name="Instagram" data-name="Instagram" placeholder="Instagram" id="instagram"></div>
+                <div class="form-field-block hide w-clearfix"><img src="/public/assets/59ea6cc219032000013eb485_006-linkedin.svg" class="form-icon"><input type="text" class="form-field w-input" maxlength="256" name="Linked-in" data-name="Linked In" placeholder="Linked in" id="linkedin"></div>
+            <input type="submit" value="Update my account" data-wait="Please wait..." id="submit_data" class="button w-button"></form>
+                <div class="w-form-done">
+                    <div>Thank you! Your submission has been received!</div>
+                </div>
+                <div class="w-form-fail">
+                    <div>Oops! Something went wrong while submitting the form.</div>
+                </div>
+        </div>
+    </div>
+</div>
+<div class="column-4 w-hidden-medium w-hidden-small w-hidden-tiny w-col w-col-2"></div>
+<div class="w-col w-col-4">
+    <div>
+        <h2>Account Settings</h2>
+        <div class="form-block-5 w-form">
+            <form id="email_form" name="email-form" data-name="Email Form">
+                <h4>Update Email</h4>
+                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc236e5a00001680826_003-mail.svg" class="form-icon"><input type="email" class="form-field w-input" maxlength="256" name="Update-Your-Email" data-name="Update Your Email" placeholder="Update Your Email" id="email" required></div><input type="submit" value="Update my e-mail" data-wait="Please wait..." id="email_submit" class="button w-button"></form>
+            <div class="w-form-done">
+                <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+                <div>Oops! Something went wrong while submitting the form.</div>
+            </div>
+        </div>
+        <div class="form-block-4 w-form">
+            <form id="password_form" name="email-form-2" data-name="Email Form 2">
+                <h4>Change Password</h4>
+                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc2f4f8560001c947a9_005-lock.svg" class="form-icon"><input type="password" class="form-field w-input" maxlength="256" name="Current-Password" data-name="Current Password" placeholder="Current Password" id="current_password" required></div>
+                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc136e5a00001680825_004-lock-1.svg" class="form-icon"><input type="password" class="form-field w-input" maxlength="256" name="New-Password" data-name="New Password" placeholder="New Password" id="new_password" required></div>
+                <div class="form-field-block w-clearfix"><img src="/public/assets/59ea6cc136e5a00001680825_004-lock-1.svg" class="form-icon"><input type="password" class="form-field w-input" maxlength="256" name="New-Password-2" data-name="New Password 2" placeholder="Confirm New Password" id="confirm_new_password" required></div>
+                <div><span class="form-error">This is some text inside of a div block.</span></div><input type="submit" value="Update my password" data-wait="Please wait..." id="password_submit" class="button w-button"></form>
+            <div class="w-form-done">
+                <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+                <div>Oops! Something went wrong while submitting the form.</div>
+            </div>
+        </div>
+        <div class="form-block-3 w-form">
+            <form id="email-form-3" name="email-form-3" data-name="Email Form 3">
+                <h4>Push Notifications</h4>
+                <div>
+                    <div class="form-field-block">
+                        <div class="w-checkbox"><input type="checkbox" id="checkbox-3" name="checkbox-3" data-name="Checkbox 3" class="w-checkbox-input"><label for="checkbox" class="w-form-label">Project Updates</label></div>
+                    </div>
+                    <div class="form-field-block">
+                        <div class="w-checkbox"><input type="checkbox" id="checkbox-4" name="checkbox-4" data-name="Checkbox 4" class="w-checkbox-input"><label for="checkbox" class="w-form-label">Project Reminders</label></div>
+                    </div>
+                    <div class="form-field-block">
+                        <div class="w-checkbox"><input type="checkbox" id="checkbox-2" name="checkbox-2" data-name="Checkbox 2" class="w-checkbox-input"><label for="checkbox" class="w-form-label">Friend Updates</label></div>
+                    </div>
+                </div><input type="submit" value="Update my settings" data-wait="Please wait..." class="button w-button"></form>
+            <div class="w-form-done">
+                <div>Thank you! Your submission has been received!</div>
+            </div>
+            <div class="w-form-fail">
+                <div>Oops! Something went wrong while submitting the form.</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>

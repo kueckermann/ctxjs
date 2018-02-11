@@ -1,0 +1,32 @@
+{
+  "author": "Kyle Ueckermann",
+  "dependencies": {
+    "fs-extra": "^2.1.2",
+    "async-min": "^1.0.0",
+    "socket.io-client": "^2.0.4",
+    "component-emitter": "^1.2.1",
+    "to-array": "^0.1.4",
+    "parseuri": "0.0.5",
+    "socket.io": "^2.0.4"
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:kueckermann/CTX.git"
+  },
+  "name": "ctxjs",
+  "bugs": {
+    "url": "https://github.com/AwakenMyCity/CTX_Framework/issues"
+  },
+  "homepage": "https://github.com/AwakenMyCity/CTX_Framework#readme",
+  "version": "3.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ctx",
+    "ctxjs"
+  ],
+  "description": ""
+}

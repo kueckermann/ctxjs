@@ -1,0 +1,96 @@
+<div ctx-map="project_page">
+    <div class="title-section no-gradient project" style="background-image:url({{> cover }})">
+        <div class="title-section-gradient"></div>
+        <h1 class="page-header-content">{{> project.name }}</h1>
+    </div>
+    <div class="section interior">
+        <div class="w-container">
+            <div class="w-row">
+                <div class="w-col w-col-4"><img src="/public/assets/59d08faefb0edc0001b511db_001-shapes-1.svg" data-ix="fill-heart" class="heart-outline mobile w-hidden-main w-hidden-medium">{{ if(next){ }}
+                    <div class="sidebar-block next-date">
+                        <h3>Coming Up</h3>
+                        <div class="info-block no-wrap w-clearfix"><img src="/public/assets/59ccc85c172d780001e8a380_001-time.svg" class="icon">
+                            <div>{{> next.date }}</div>
+                        </div>
+                        <div class="info-block no-wrap w-clearfix"><img src="/public/assets/59ccc85c288a8e0001153b7a_002-square.svg" class="icon">
+                            <div>{{> next.time }}</div>
+                        </div>{{ if(next.venue){ }}
+                        <div class="info-block no-wrap w-clearfix"><img src="/public/assets/59ccc85cc67c8d000175e3cd_003-placeholder.svg" class="icon">
+                            <div>{{> next.venue}}</div>
+                        </div>{{ } }}
+                        <div class="info-block w-clearfix"><img src="/public/assets/59d67e540662d10001851e6e_002-location.svg" class="icon">
+                            <div>
+                                <div>{{> next.address }}</div><a class="link small" href="{{> maps_link }}">Get Directions</a></div>
+                        </div><a id="join_timeslot" href="#serve" class="button green join-date w-button">Join a serving Date</a></div>{{ } }}
+                    <div class="_2-column-block">
+                        <div class="sidebar-block half">
+                            <h3>Organized by</h3><a class="info-block no-wrap link w-inline-block" href="{{> author_href }}"><div class="avatar org1 center" style="background-image:url({{> author_avatar }})"></div><div class="w-hidden-tiny">{{> author.name }}</div></a></div>{{
+                        if(campaigns){ }}
+                        <div class="sidebar-block half">
+                            <h3>Part of</h3>
+                            <div>{{> campaigns }}</div>
+                        </div>{{ } }}
+                        <div class="sidebar-block half">
+                            <h3>Questions?</h3>{{ if(contact_href){ }}
+                            <div><a href="{{> contact_href }}" class="link">Contact Organizer</a></div>{{ } }}
+                            <div><a href="https://vomo.zendesk.com/hc/en-us" class="link">FAQ</a></div>
+                        </div>
+                        <div class="sidebar-block half">
+                            <div>
+                                <h3>Share</h3><a id="share_facebook" class="social-link-block w-inline-block"><img src="/public/assets/59d8aaadbcf399000192b969_003-social-media-1(1).svg"></a><a id="share_messenger" class="social-link-block w-inline-block"><img src="/public/assets/59d8aaad9215eb00015d2549_001-interface(1).svg"></a>
+                                <a id="share_twitter" class="social-link-block w-inline-block"><img src="/public/assets/59d8aaad03aac4000153f8f0_002-social-media(1).svg"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-col w-col-8">
+                    <div class="favorite-block"><a id="add_to_favorites" class="w-inline-block {{> favorite }}"><img src="/public/assets/59d08faefb0edc0001b511db_001-shapes-1.svg" data-ix="fill-heart" class="heart-outline w-hidden-small w-hidden-tiny"><img src="/public/assets/59d08f9a10d34e00017a8b1b_002-shapes.svg" data-ix="fill-heart" class="heart-outline favorite"></a></div>
+                    <div data-duration-in="300" data-duration-out="100" class="w-tabs">
+                        <div class="tabs-menu w-tab-menu">
+                            <a data-w-tab="Details" class="tab-link w-inline-block w-tab-link w--current">
+                                <h3 class="tab-heading">Details</h3>
+                            </a>{{ if(project.n_updates){ }}
+                            <a data-w-tab="Updates" class="tab-link w-inline-block w-tab-link">
+                                <h3 class="tab-heading">Updates</h3>
+                                <div class="tab-number">{{> project.n_updates }}</div>
+                            </a>{{ } }}</div>
+                        <div class="w-tab-content">
+                            <div data-w-tab="Details" class="tab-pane w-tab-pane w--tab-active">
+                                <p>{{> text }}</p>{{ if(media){ }}
+                                <div id="project_media" class="gallery-block">{{> media }}</div>{{ } }}
+                                <div class="w-row">{{ if(details || waiver_href){ }}
+                                    <div class="column w-col w-col-8">
+                                        <div class="column">
+                                            <h4>Need to know</h4>
+                                            <p>{{> details }}</p>{{ if(waiver_href){ }}
+                                            <div class="info-block w-clearfix"><img src="/public/assets/59d8a610aaa78100013ea28d_interface.svg" class="icon"><a class="link" href="{{> waiver_href }}">Waiver</a></div>{{ } }}</div>
+                                    </div>{{ } }}{{ if(roles){ }}
+                                    <div class="column w-col w-col-4">
+                                        <h4>Available roles</h4>
+                                        <ul>{{> roles }}</ul>
+                                    </div>{{ } }}</div>{{ if(categories){ }}
+                                <div class="w-row">
+                                    <div class="w-col w-col-8">
+                                        <div id="categories_container" class="project-tags">{{> categories }}</div>
+                                    </div>
+                                    <div class="w-col w-col-4"></div>
+                                </div>{{ } }}</div>{{ if(project.n_updates){ }}
+                            <div data-w-tab="Updates" class="tab-pane w-tab-pane">
+                                <div id="updates"></div>
+                                <div id="updates_loader" class="loader"><img src="/public/assets/59cae5f6e4dab000012d4e9f_logo.svg"></div><a id="updates_load_more" class="button load-more w-button">Load more</a></div>{{ } }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="map-section">
+    <div id="map" class="map-section w-widget w-widget-map"></div>
+</div>{{ if(next){ }}
+<div id="serve" class="padded-section">
+    <div class="w-container">
+        <h2>Serving Dates</h2>
+        <div id="timeslots"></div>
+        <div id="timeslots_loader" class="loader"><img src="/public/assets/59cae5f6e4dab000012d4e9f_logo.svg"></div><a id="timeslots_load_more" class="button load-more w-button">Load more</a></div>
+</div>{{ } }}
+<div class="w-embed"></div>
+</div>

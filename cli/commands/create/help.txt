@@ -1,0 +1,5 @@
+Usage:
+    new <name> [--option]
+
+Options:  
+    -h --help       Show help.
