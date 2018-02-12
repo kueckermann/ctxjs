@@ -19,6 +19,9 @@ this.on('running', function(error){
     document.write(this.render());
     document.close();
 
+    require('fastclick')(document.body);
 
-    CTX.start('/app/modules/welcome');
+    CTX.start('/app/modules/welcome', function(error, service){
+
+    });
 })

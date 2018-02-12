@@ -11,6 +11,11 @@ function Service(_package){ // _package contains all relevant assets for the ser
 	var self = this;
 	_package = _package instanceof Object ? _package : {};
 
+	if(!Service._cache[_package.path] && CTX.config.cache){
+		// Store a cached version of the supplied package.
+		Service._cache[_package.path] = _package;
+	}
+
 	// Immutable properties
 	Object.defineProperty(this, 'path', {
 		value: typeof _package.path == 'string' ? _package.path : ""
@@ -107,24 +112,25 @@ function Service(_package){ // _package contains all relevant assets for the ser
 	var self = this;
 	process.nextTick(function(){
 		self._socket.emit('__CTX__CONNECT', self._id);
-		var controller = _package.controller;
 
 		switch(typeof _package.controller){
 			case 'function': break;
 			case 'string':
+				// The string gets updated in the package causing it to update
+				// also in the cache. So next time it won't need to re-evaluate.
 				try{
-					controller = new Function('require', 'global', 'process', controller);
+					_package.controller = new Function('require', 'global', 'process', _package.controller);
 				}catch(error){
 					console.error('CTX: Failed to evaluate controller for "'+self.path+'".');
 
 					if(CTX.config.verbose) console.error(error);
 					else console.error(error.message);
 
-					controller = new Function("");
+					_package.controller = new Function("");
 				}
 				break;
 			default:
-	        	controller = new Function("");
+	        	_package.controller = new Function("");
 			break;
 
 		}

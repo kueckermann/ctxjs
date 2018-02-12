@@ -13,8 +13,8 @@ try{
     fs.ensureDirSync(dir);
 }catch(error){}
 
-softCopy('background.js');
-softCopy('foreground.js');
+softCopy('controller.js');
+softCopy('interface.js');
 softCopy('service.ctx.json');
 
 function softCopy(file){

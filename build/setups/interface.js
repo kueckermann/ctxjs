@@ -21,6 +21,7 @@ require('./localhost.js');
 
 
 // Functions
+// fs gets local implementations
 CTX._fs = {
     readFile : function(){}
 }
@@ -59,6 +60,7 @@ CTX._generateId = function(arg){
 }
 
 var proto_reg = /^\w+:\/{2,}/;
+// Path tools are similar to nodejs but are used for parsing url based paths.
 CTX._path = {
     join : function(a, b){
         var args = toArray(arguments);
@@ -149,7 +151,7 @@ CTX.start = function start(){
         done = arguments[2];
     }
 
-    options.path = '/'+(options.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, ''));
+    options.path = '/'+CTX._path.normalize(options.path).replace(/^\//, ''));
 
     var socket = CTX.connect(options.origin);
     var events = new Emitter();

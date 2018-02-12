@@ -26,7 +26,7 @@ localhost.on('__CTX__REQUIRE', function(requests, done){
 });
 
 localhost.on('__CTX__START', function(options, done){
-    var _package = CTX.Service._cache[options.path];
+    var _package = CTX.Service._package[options.path];
     if(_package && CTX.config.cache !== false){
         done(null, _package);
     }else{
@@ -49,16 +49,15 @@ localhost.on('__CTX__START', function(options, done){
 
             var _package = {
                 path    : options.path,
-                controllers : {},
                 _descriptor : _descriptor
             }
 
             _descriptor.controllers = _descriptor.controllers instanceof Object ? _descriptor.controllers : {};
 
             async.parallel({
-                bg : function(cb){
-                    if(_descriptor.controllers.background){
-                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controllers.background), function(error, file){
+                controller : function(cb){
+                    if(_descriptor.controller){
+                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controller), function(error, file){
                             if(error){
                                 console.error('CTX: Failed to read controller for "'+_package.path+'".');
                                 if(CTX.config.verbose) console.error(error);
@@ -66,10 +65,10 @@ localhost.on('__CTX__START', function(options, done){
                             }else{
                                 try{
                                     if(!/sourceURL=/g.test(file)){
-                                        file += '\n//# sourceURL='+_package.path
+                                        file += '\n//# sourceURL='+CTX._path.join(_package.path, 'controller');
                                     }
 
-                                    _package.controllers.background = file;
+                                    _package.controller = file;
                                 }catch(error){
                                     console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
                                     if(CTX.config.verbose) console.error(error);
@@ -83,18 +82,18 @@ localhost.on('__CTX__START', function(options, done){
                         cb();
                     }
                 },
-                fg : function(cb){
-                    if(_descriptor.controllers.foreground){
-                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controllers.foreground), function(error, file){
+                interface : function(cb){
+                    if(_descriptor.interface){
+                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.interface), function(error, file){
                             if(error){
                                 console.error('CTX: Failed to read controller for "'+_package.path+'".');
                                 if(CTX.config.verbose) console.error(error);
                                 else console.error(error.message);
                             }else{
                                 if(!/sourceURL=/g.test(file)){
-                                    file += '\n//# sourceURL='+_package.path;
+                                    file += '\n//# sourceURL='+CTX._path.join(_package.path, 'interface');
                                 }
-                                _package.controllers.foreground = file;
+                                _package.interface = file;
                             }
 
                             cb();
@@ -107,15 +106,14 @@ localhost.on('__CTX__START', function(options, done){
                 if(error){
                     done(error);
                 }else{
-                    try{
-                        _package.controller = new Function('require', 'global', 'process',_package.controllers.background);
-                    }catch(error){
-                        console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
-                        if(CTX.config.verbose) console.error(error);
-                        else console.error(error.message);
-                    }
+                    // try{
+                    //     _package.controller = new Function('require', 'global', 'process',_package.controllers.background);
+                    // }catch(error){
+                    //     console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
+                    //     if(CTX.config.verbose) console.error(error);
+                    //     else console.error(error.message);
+                    // }
 
-                    CTX.Service._cache[_package.path] = _package;
                     done(undefined,  _package);
                 }
             });

@@ -155,21 +155,34 @@ CTX.start = function start(){
     var events = new Emitter();
 
     process.nextTick(function(){
-        var cache_id;
-        if(options.unique !== true){
-            // If unique is not requested than check if there is already a service
-            // running with name or path.
+        var descrete_id;
 
-            cache_id = CTX._generateId((options.origin || '')+':'+(options.group || options.path));
+        // Check if a service is already running via the discrete reference.
+        // The default is unless is to use the same discrete reference unless
+        // true is specified or a different discrete reference.
 
-            if(CTX.start._cache[cache_id]){
-                done(undefined, CTX.start._cache[cache_id]);
+        if(options.discrete && options.discrete !== true){
+            descrete_id = CTX._generateId((options.origin || '')+':'+(options.group || options.path));
+
+            if(CTX.start._discrete[cache_id]){
+                var service = CTX.start._discrete[cache_id];
+                events.emit('complete', undefined, service);
+                events.emit('success', service);
+                events.off();
+                done(undefined, service);
                 return;
             }
-            // If no service is running with the id than request a new service.
         }
 
-        socket.emit('__CTX__START', options, function(error, _package){
+        // Fetch service package
+        if(options.cache !== false && CTX.config.cache === true && CTX.Service._cache[options.path]){
+            // Look up cached assets
+            startService(undefined, CTX.Service._cache[options.path]);
+        }else{
+            socket.emit('__CTX__START', options, startService);
+        }
+
+        function startService(error, _package){
             var service;
             if(!error){
                 try{
@@ -192,16 +205,17 @@ CTX.start = function start(){
 
                 events.emit('success', service);
             }
+            events.off();
 
             service.on('running', function(error){
                 done(error, service);
             });
-        });
+        }
     });
 
     return events;
 }
-CTX.start._cache = {};
+CTX.start._discrete = {};
 
 CTX.connect = function(origin){
     origin = typeof origin == 'string' ? parseuri(origin).source : '';
