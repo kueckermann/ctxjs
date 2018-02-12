@@ -1,0 +1,6 @@
+{
+  "controllers" : {
+      "foreground" : "./foreground.js",
+      "background" : "./background.js"
+  }
+}

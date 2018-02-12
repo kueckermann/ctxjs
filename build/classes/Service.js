@@ -28,17 +28,6 @@ function Service(_package){ // _package contains all relevant assets for the ser
 		value : _package,
 	});
 
-	// var _id = '';
-	// Object.defineProperty(this, '_id', {
-	// 	get : function(){
-	// 		return _id;
-	// 	},
-	// 	set : function(set_id) {
-	// 		if(!_id){
-	// 			_id = set_id == 'string' ? set_id : CTX._generateId();
-	// 		}
-	// 	}
-	// });
 	Object.defineProperty(this, '_id', {
 		value : typeof _package._id == 'string' ? _package._id : CTX._generateId(),
 	});
@@ -126,7 +115,7 @@ function Service(_package){ // _package contains all relevant assets for the ser
 				try{
 					controller = new Function('require', 'global', 'process', controller);
 				}catch(error){
-					console.error(`CTX: Failed to evaluate controller for "${self.path}".`);
+					console.error('CTX: Failed to evaluate controller for "'+self.path+'".');
 
 					if(CTX.config.verbose) console.error(error);
 					else console.error(error.message);

@@ -1,0 +1,10 @@
+<script type="text/javascript" src="node_modules/ctxjs/dist/ctxjs.js"></script>
+<script type="text/javascript">
+  // Starting the local service
+  CTX.start("services/messages", {
+    origin : location.origin,
+    data: {field: "something"} // data is passed to foreground and background in the service
+  }, function(error, service) {
+
+});
+</script>

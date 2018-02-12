@@ -1,0 +1,16 @@
+{
+  "name": "ctx_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.0",
+    "ctxjs": "^3.0.1",
+    "express": "^4.16.2"
+  }
+}

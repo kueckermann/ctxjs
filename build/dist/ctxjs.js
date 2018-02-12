@@ -6822,17 +6822,6 @@ function Service(_package){ // _package contains all relevant assets for the ser
 		value : _package,
 	});
 
-	// var _id = '';
-	// Object.defineProperty(this, '_id', {
-	// 	get : function(){
-	// 		return _id;
-	// 	},
-	// 	set : function(set_id) {
-	// 		if(!_id){
-	// 			_id = set_id == 'string' ? set_id : CTX._generateId();
-	// 		}
-	// 	}
-	// });
 	Object.defineProperty(this, '_id', {
 		value : typeof _package._id == 'string' ? _package._id : CTX._generateId(),
 	});
@@ -6920,7 +6909,7 @@ function Service(_package){ // _package contains all relevant assets for the ser
 				try{
 					controller = new Function('require', 'global', 'process', controller);
 				}catch(error){
-					console.error(`CTX: Failed to evaluate controller for "${self.path}".`);
+					console.error('CTX: Failed to evaluate controller for "'+self.path+'".');
 
 					if(CTX.config.verbose) console.error(error);
 					else console.error(error.message);
@@ -7206,7 +7195,12 @@ CTX.Module = require('../classes/Module.js');
 CTX.start = function start(){
     // Starts a new instance of a service.
     var options = {};
-    var done = function(){};
+    var done = function(error){
+        if(error){
+            console.error('CTX: Failed to start service "'+options.path+'".');
+            if(CTX.config.verbose) console.error(error);
+        }
+    }
 
     switch(typeof arguments[0]){
         case 'object':
@@ -7253,7 +7247,8 @@ CTX.start = function start(){
             if(!error){
                 try{
                     service = new CTX.Service(_package);
-                    service.data = _package.data || options.data;
+                    var data = _package.data || options.data;
+                    service.data = data !== undefined ? data : {};
                 }catch(caught){
                     error = caught;
                 }
