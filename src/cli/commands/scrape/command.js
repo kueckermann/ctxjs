@@ -7,7 +7,11 @@ const colors = require('colors');
 var argv = require('minimist')(process.argv.slice(2));
 
 var import_url = argv._[1];
-import_url = import_url[import_url.length-1] == "/" ? import_url.slice(0,-1) : import_url;
+import_url = import_url.replace(/\/+$/, '');
+if(!/^\w+:\/\//.test(import_url)){
+    import_url = `http://${import_url}`;
+}
+
 
 var export_path = process.cwd();
 if(!export_path){

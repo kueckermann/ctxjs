@@ -10,9 +10,9 @@ if(argv.verbose){
     global.verbose = false;
 }
 
-if(argv.help){
+if(argv.help || argv.h){
     showHelp();
-}else if(argv.version){
+}else if(argv.version || argv.v){
     var _package = require(path.join(__dirname, 'package.json'));
     console.log(_package.version);
 }else{

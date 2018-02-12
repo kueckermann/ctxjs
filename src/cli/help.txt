@@ -1,23 +1,13 @@
 Commands:
-    init        Initalize a new project.
-    develop     Start the project in development mode.
-    update      Update the CTX library.
-    compile     Compile the application.
-    check       Scan the project for potential errors and fix them.
-
-    add         Add a node to the application.
-    remove      Remove a node from the application.
-    link        Create a link between two nodes.
-    unlink      Delete a link between two nodes.
-    edit        Edit an existing nodes details.
-
-    language    Edit available languages.
+    create      Create a service.
+    scrape      Scrape a url.
+    migrate     Migrate services in current directory.
 
 Usage:
     [--option] [<argument>]
-    <module> [command] [--option] [<argument>]
-    <module> --help         View module help file
+    <command> [--option]
 
 Options:
     -h --help     Show help.
-    --version     Show version.
+    -v --version  Show version.
+    --verbose     Use verbose loggin.
