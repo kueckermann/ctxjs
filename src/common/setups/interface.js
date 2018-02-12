@@ -155,7 +155,7 @@ CTX.start = function start(){
     var events = new Emitter();
 
     process.nextTick(function(){
-        var descrete_id;
+        var reference;
 
         // Check if a service is already running via the discrete reference.
         // The default is unless is to use the same discrete reference unless
@@ -164,8 +164,8 @@ CTX.start = function start(){
         if(options.discrete && options.discrete !== true){
             descrete_id = CTX._generateId((options.origin || '')+':'+(options.group || options.path));
 
-            if(CTX.start._discrete[cache_id]){
-                var service = CTX.start._discrete[cache_id];
+            if(CTX.start._reference[reference]){
+                var service = CTX.start._reference[reference];
                 events.emit('complete', undefined, service);
                 events.emit('success', service);
                 events.off();
@@ -187,8 +187,7 @@ CTX.start = function start(){
             if(!error){
                 try{
                     service = new CTX.Service(_package);
-                    var data = _package.data || options.data;
-                    service.data = data !== undefined ? data : {};
+                    service.data = _package.data || options.data;
                 }catch(caught){
                     error = caught;
                 }
@@ -201,8 +200,7 @@ CTX.start = function start(){
                 done(error);
                 return;
             }else{
-                if(cache_id) CTX.start._cache[cache_id] = service;
-
+                if(reference) CTX.start._reference[reference] = service;
                 events.emit('success', service);
             }
             events.off();
@@ -215,7 +213,7 @@ CTX.start = function start(){
 
     return events;
 }
-CTX.start._discrete = {};
+CTX.start._reference = {};
 
 CTX.connect = function(origin){
     origin = typeof origin == 'string' ? parseuri(origin).source : '';

@@ -4,12 +4,12 @@ A service exists as a folder on your local file system that contains a service d
 
 A service can be created manually or via the cli if ctxjs has been installed globally via npm.
 
-```tcl
+```
 $ ctx create ./example
 ```
 The command above would create a folder called example in our current working directory with the following contents.
 
-* #### example
+* **example**
     * service.ctx.json
     * controller.js
     * interface.js
@@ -23,7 +23,6 @@ The internal structure of the service descriptor would be the following:
 }
 ```
 
-
 ## Starting a service
 Assuming that we created the example service in our current directory, as mentioned above, we could start the service from node js as follows.
 
@@ -35,3 +34,6 @@ CTX.start('example', function(error, service){
     // as well as any errors that may have occurred.
 });
 ```
+
+## What next?
+To get a deeper understanding of CTX and building nano-service applications, take a look at one of the provided [demos](../demos/Demos.md) or dive deeper with the [API Docs](API_Docs.md).

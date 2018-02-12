@@ -1,41 +1,45 @@
 # API Docs
 ## *@global* **CTX**    
-CTX
-The CTX global variable gives access to parameters, methods and classes for interacting with CTX.
-
+**@public**
 ```javascript
-// Parameters
-CTX.Service // A reference to the Service class.
-CTX.config = {
-	verbose : false, // Turn on or off verbose logs.
-	cache : true // Disable caching for all CTX processes. Bad idea on a hosted site, good idea for local development.
-	origin : location.origin || "", // The default origin for services. location.origin if available otherwise an empty string.
-	root : process.cwd(), // The root directory for CTX, defaults to the current working directory.
-}
+CTX.Service Class // Reference to the Service class.
+CTX.Module Class // Reference to the Module class.
+CTX.config Object // Global CTX configuration options.
+	↳ verbose Boolean (false) // Turn on or off verbose logs.
+	↳ cache Boolean (true) // Disable caching for all services.
+	↳ root String ($CWD) // The root directory for CTX
 
-// Functions
-CTX.start([path String, options Object, callback Function]); // Starts a new Service instance.
-CTX.listen(arg0 Number|Server); // Allow CTX to serve public Services from a port or an already existing server. https://socket.io/docs/server-api/#server-listen-httpserver-options
+CTX.start Function ([path String, options Object, callback Function]) // Starts a new Service instance.
+CTX.listen Function (arg0 Number|Server) // Attach socket.io listener to a server or port.
+```
+
+**@private**
+```javascript
+CTX._origins Object // All currently active origins.
+CTX._path Object // Simple path parsing tools which support url protocols.
+	↳ normalize Function (path String)
+	↳ join Function (path String)
+
+CTX._fs Object
+	↳ readFile Function (path String, callback Function) // Read a file from the local file system.
+
+CTX._generateId Function ([from String, length Number]) // Generate a random id or basic hash from string "from" to length (default:32).
+CTX.start._reference Object // Stores discrete references for start.
 ```
 
 ## *@class* **Service**
-
 Service is the class controlling the lifecycle of the service.
-Service class declaration can be accessed at CTX.Service.
 
 **@public**
 ```javascript
-// Parameters
-Service.path // The path to the service from CTX.config.root.
-Service.data // The data required for the service to start up and restart if it dies. WARNING: Don't store private information in data.
+Service.path String // The path to the service from CTX.config.root.
+Service.data Object // The data required for the service to start up and restart if it dies. WARNING: Don't store private information in data.
 
-static Service.cache // Service asset cache.
-static Service.running // All services that are currently running.
-
-// Methods
-Service.stop(); // Permanently stops the service from running in all contexts.
-Service.send([arg0, ..., argN, callback Function]); // Send message between service contexts.
-Service.require(requests String|Object|Array, callback Function); // Asynchronous module loader that works accross contexts.
+Service.stop Function // Permanently stops the service from running in all contexts.
+Service.send Function ([arg0, ..., argN, callback Function]) // Send message between service contexts.
+Service.require Function (requests String|Object|Array, callback Function) // Asynchronous module loader that works accross contexts.
+Service.on Function (event String, callback Function) // Add an event listener.
+Service.emit Function (event String [,arg0, ..., argN]) // Emit an event.
 
 // Events
 Service.on('init', function(callback Function){...}); // Fired after service controller is initialized. Callback must be executed when startup is complete.
@@ -46,4 +50,29 @@ Service.on('running', function(){...}); // Fired after all 'start' events have c
 
 **@private**
 ```javascript
+static Service._cache Object // Service asset cache.
+static Service._running Object // All services that are currently running.
+```
+
+
+## *@class* **Module**
+Module is an asynchronous module loader loosely based on the node.js module loader.
+
+**@public**
+```javascript
+Module.content String // The raw text for the module.
+Module.path String // The file path to the module.
+Module.exports Object // The exported data from the module.
+Module.compile Function // Compiles a module.
+
+static Module.natives Object // Module names that are native to the current context.
+static Module.paths Array // Lookup path to search for modules.
+static Module.require Function (requests String)// A wrapper for the native require.
+```
+
+**@private**
+```javascript
+static Module._cache Object // Module cache.
+static Module._fetch Function (requests String|Object|Array, callback Function) // Fetches the modules from disk/cache and passes them to callback.
+
 ```

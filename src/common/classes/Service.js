@@ -103,7 +103,7 @@ function Service(_package){ // _package contains all relevant assets for the ser
 			return data;
 		},
 		set : function(set_data) {
-			data = set_data !== undefined ? set_data : data;
+			data = !(set_data instanceof Object) ? set_data : data;
 		}
 	});
 
