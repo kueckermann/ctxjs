@@ -1,0 +1,26 @@
+{
+  "name": "ctxjs-cli",
+  "version": "4.0.1",
+  "description": "CTX Command Line Interface",
+  "main": "index.js",
+  "bin": {
+    "ctx": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kyle Ueckermann",
+  "license": "MIT",
+  "dependencies": {
+    "async-min": "^1.0.4",
+    "cheerio": "^1.0.0-rc.2",
+    "colors": "^1.1.2",
+    "fs-extra": "^4.0.0",
+    "html-entities": "^1.2.1",
+    "js-beautify": "^1.7.4",
+    "mime-types": "^2.1.15",
+    "minimist": "^1.2.0",
+    "request": "^2.83.0",
+    "xml2js": "^0.4.19"
+  }
+}

@@ -1,0 +1,13 @@
+Commands:
+    create      Create a service.
+    scrape      Scrape a url.
+    migrate     Migrate services in current directory.
+
+Usage:
+    [--option] [<argument>]
+    <command> [--option]
+
+Options:
+    -h --help     Show help.
+    -v --version  Show version.
+    --verbose     Use verbose loggin.

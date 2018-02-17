@@ -1,0 +1,6 @@
+{
+    "controllers" : {
+        "local" : "./local.js",
+        "remote" : "./remote.js"
+    }
+}
