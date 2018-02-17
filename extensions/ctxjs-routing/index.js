@@ -73,8 +73,8 @@ var trim_reg = /^\/+|\/+$/g;
 function getConnection(service, route){
     route = (route || '').replace(trim_reg, '');
 
-    for(var glob in service._package.routing){
-        var connection = service._package.routing[glob];
+    for(var glob in service.assets.routing){
+        var connection = service.assets.routing[glob];
 
         var match = connection._glob.exec(route);
         if(match){
@@ -103,9 +103,9 @@ function setParameters(service){
     var micromatch = require('micromatch');
 
     // Prepare routing data when service is attached.
-    if(!service._package.routing){
-        service._package.routing = service._package._descriptor.routing || {};
-        var connections = service._package.routing;
+    if(!service.assets.routing){
+        service.assets.routing = service.assets.descriptor.routing || {};
+        var connections = service.assets.routing;
 
         for(var glob in connections){
             var connection = connections[glob];

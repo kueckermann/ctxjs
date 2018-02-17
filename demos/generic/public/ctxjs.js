@@ -6809,30 +6809,29 @@ function Service(options){ // assets contains all relevant assets for the servic
 
 	var assets = options.assets;
 
-	if(!Service._cache[assets.path] && CTX.config.cache){
-		// Store a cached version of the supplied package.
-		Service._cache[assets.path] = assets;
-	}
-
 	// Immutable properties
-	Object.defineProperty(this, 'path', {
-		value: typeof assets.path == 'string' ? assets.path : ""
-	});
-
-	Object.defineProperty(this, 'origin', {
-		value: typeof assets.origin == 'string' ? assets.origin : ''
-	});
-
-	Object.defineProperty(this, 'context', {
-		value: assets.context == 'remote' ? 'remote' : 'local'
-	});
-
 	Object.defineProperty(this, 'assets', {
 		value : assets,
 	});
 
+	Object.defineProperty(this, 'path', {
+		value: typeof assets.path == 'string' ? assets.path : ''
+	});
+
+	Object.defineProperty(this, 'origin', {
+		value: typeof options.origin == 'string' ? options.origin : ''
+	});
+
+	Object.defineProperty(this, 'context', {
+		value: options.context == 'remote' ? 'remote' : 'local'
+	});
+
 	Object.defineProperty(this, '_id', {
-		value : typeof assets._id == 'string' ? assets._id : CTX._generateId()
+		value : typeof options._id == 'string' ? options._id : CTX._generateId()
+	});
+
+	Object.defineProperty(this, '_reference', {
+		value : typeof options._reference == 'string' ? options._reference : ''
 	});
 
 	Object.defineProperty(this, '_flags', {
@@ -6842,7 +6841,6 @@ function Service(options){ // assets contains all relevant assets for the servic
 			stopped : false,
 		}
 	});
-
 
 	Object.defineProperty(this, '_protocol', {
 		get: function(){
@@ -6907,6 +6905,19 @@ function Service(options){ // assets contains all relevant assets for the servic
 			data = !(set_data instanceof Object) ? set_data : data;
 		}
 	});
+
+
+
+	if(!Service._cache[this.path] && CTX.config.cache){
+		// Store a cached of the assets
+		Service._cache[assets.path] = assets;
+	}
+
+	if(this._reference && !Service._reference[this._reference]){
+		// Store referenced service.
+		Service._reference[this._reference] = this;
+	}
+
 
 	// Initialization routine
 	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -6998,6 +7009,7 @@ Service.prototype.stop = function(transmit){
 		this.off();
 		this._status = -1;
 		delete Service._running[this._id];
+		delete Service._reference[this._reference];
 	}
 }
 
@@ -7064,13 +7076,16 @@ Service.prototype.require = function(requests, done){
 Service.prototype.toJSON = function(){
 	var assets = {
 		_id : this._id,
-		context : 'remote',
-		origin : this.origin,
-		path : this.path,
-		controllers : {
-			remote : this.assets.controllers.remote,
-		},
 		data : this.data,
+		origin : this.origin,
+		context : 'remote',
+		data : this.data,
+		assets : {
+			path : this.path,
+			controllers : {
+				remote : this.assets.controllers.remote,
+			},
+		}
 	}
 
 	return assets;
@@ -7250,7 +7265,7 @@ CTX.start = function start(){
 
         if(options.reference !== false){
             reference = CTX._generateId((options.origin || '')+':'+(options.reference || options.path));
-            delete options.reference; // Dont pass reference to onwards.
+            options.reference = reference; // Dont pass reference to onwards.
 
             if(CTX.Service._reference[reference]){
                 var service = CTX.Service._reference[reference];
@@ -7275,6 +7290,7 @@ CTX.start = function start(){
             if(!error){
                 try{
                     options.assets = assets;
+                    options._reference = reference;
                     service = new CTX.Service(options);
                 }catch(caught){
                     error = caught;
@@ -7288,7 +7304,6 @@ CTX.start = function start(){
                 done(error);
                 return;
             }else{
-                if(reference) CTX.Service._reference[reference] = service;
                 events.emit('success', service);
             }
             events.off();

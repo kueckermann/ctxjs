@@ -163,7 +163,7 @@ CTX.start = function start(){
 
         if(options.reference !== false){
             reference = CTX._generateId((options.origin || '')+':'+(options.reference || options.path));
-            delete options.reference; // Dont pass reference to onwards.
+            options.reference = reference; // Dont pass reference to onwards.
 
             if(CTX.Service._reference[reference]){
                 var service = CTX.Service._reference[reference];
@@ -188,6 +188,7 @@ CTX.start = function start(){
             if(!error){
                 try{
                     options.assets = assets;
+                    options._reference = reference;
                     service = new CTX.Service(options);
                 }catch(caught){
                     error = caught;
@@ -201,7 +202,6 @@ CTX.start = function start(){
                 done(error);
                 return;
             }else{
-                if(reference) CTX.Service._reference[reference] = service;
                 events.emit('success', service);
             }
             events.off();
