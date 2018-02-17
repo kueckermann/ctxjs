@@ -5,7 +5,7 @@ module.exports = function(service, done){
         try{
             var render = {
                 data : data instanceof Object ? data : service,
-                template : service._package.template,
+                template : service.assets.template,
             }
 
             render.template = render.template.call(render.data, require);
@@ -33,11 +33,11 @@ module.exports = function(service, done){
 }
 
 function loadTemplate(service, done){
-    if(typeof service._package._descriptor.template !== "string"){
+    if(typeof service.assets.descriptor.template !== "string"){
         console.error('CTX Template Extension: Template declaration missing in service descriptor for "'+service.path+'".');
         done();
     }else{
-        var template_path = CTX._path.join(CTX.config.path, service.path, service._package._descriptor.template);
+        var template_path = CTX._path.join(CTX.config.path, service.path, service.assets.descriptor.template);
 
         CTX._fs.readFile(template_path, function(error, template){
             if(error){
@@ -53,7 +53,7 @@ function loadTemplate(service, done){
                 }
 
                 try{
-                    service._package.template = new Function(template);
+                    service.assets.template = new Function(template);
                 }catch(error){
                     console.error('CTX Template Extension: Failed to evaluate template for "'+service.path+'".');
                     if(CTX.config.verbose) console.error(error);

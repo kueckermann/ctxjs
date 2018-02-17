@@ -26,9 +26,9 @@ localhost.on('__CTX__REQUIRE', function(requests, done){
 });
 
 localhost.on('__CTX__START', function(options, done){
-    var _package = CTX.Service._cache[options.path];
-    if(_package && CTX.config.cache !== false){
-        done(null, _package);
+    var assets = CTX.Service._cache[options.path];
+    if(assets && CTX.config.cache !== false){
+        done(null, assets);
     }else{
         // Need to remove any protocols and add them back later.
         var base_path = CTX._path.join(CTX.config.path, options.path);
@@ -39,39 +39,39 @@ localhost.on('__CTX__START', function(options, done){
                 return;
             }
 
-            var _descriptor = {};
+            var descriptor = {};
             try{
-                _descriptor = JSON.parse(file);
+                descriptor = JSON.parse(file);
             }catch(error){
                 done(error);
                 return;
             }
 
-            var _package = {
+            var assets = {
                 path    : options.path,
+                descriptor : descriptor,
                 controllers : {},
-                _descriptor : _descriptor
             }
 
-            _descriptor.controllers = _descriptor.controllers instanceof Object ? _descriptor.controllers : {};
+            descriptor.controllers = descriptor.controllers instanceof Object ? descriptor.controllers : {};
 
             async.parallel({
-                bg : function(cb){
-                    if(_descriptor.controllers.background){
-                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controllers.background), function(error, file){
+                local : function(cb){
+                    if(descriptor.controllers.local){
+                        CTX._fs.readFile(CTX._path.join(base_path, descriptor.controllers.local), function(error, file){
                             if(error){
-                                console.error('CTX: Failed to read controller for "'+_package.path+'".');
+                                console.error('CTX: Failed to read controller for "'+assets.path+'".');
                                 if(CTX.config.verbose) console.error(error);
                                 else console.error(error.message);
                             }else{
                                 try{
                                     if(!/sourceURL=/g.test(file)){
-                                        file += '\n//# sourceURL='+_package.path
+                                        file += '\n//# sourceURL='+CTX._path.join(assets.path, 'controller');
                                     }
 
-                                    _package.controllers.background = file;
+                                    assets.controllers.local = file;
                                 }catch(error){
-                                    console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
+                                    console.error('CTX: Failed to evaluate controller for "'+assets.path+'".');
                                     if(CTX.config.verbose) console.error(error);
                                     else console.error(error.message);
                                 }
@@ -83,18 +83,18 @@ localhost.on('__CTX__START', function(options, done){
                         cb();
                     }
                 },
-                fg : function(cb){
-                    if(_descriptor.controllers.foreground){
-                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controllers.foreground), function(error, file){
+                remote : function(cb){
+                    if(descriptor.controllers.remote){
+                        CTX._fs.readFile(CTX._path.join(base_path, descriptor.controllers.remote), function(error, file){
                             if(error){
-                                console.error('CTX: Failed to read controller for "'+_package.path+'".');
+                                console.error('CTX: Failed to read controller for "'+assets.path+'".');
                                 if(CTX.config.verbose) console.error(error);
                                 else console.error(error.message);
                             }else{
                                 if(!/sourceURL=/g.test(file)){
-                                    file += '\n//# sourceURL='+_package.path;
+                                    file += '\n//# sourceURL='+CTX._path.join(assets.path, 'interface');
                                 }
-                                _package.controllers.foreground = file;
+                                assets.controllers.remote = file;
                             }
 
                             cb();
@@ -107,16 +107,7 @@ localhost.on('__CTX__START', function(options, done){
                 if(error){
                     done(error);
                 }else{
-                    try{
-                        _package.controller = new Function('require', 'global', 'process',_package.controllers.background);
-                    }catch(error){
-                        console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
-                        if(CTX.config.verbose) console.error(error);
-                        else console.error(error.message);
-                    }
-
-                    CTX.Service._cache[_package.path] = _package;
-                    done(undefined,  _package);
+                    done(undefined,  assets);
                 }
             });
         });
@@ -139,14 +130,14 @@ localhost.connect = function(socket){
         delete options.origin;
 
         // Force new incoming requests from clients to be unique.
-        options.unique = true;
+        options.reference = false;
         CTX.start(options, function(error, service){
             if(error){
                 done(error);
             }else{
-                var _package = service.toJSON();
-                _package.origin = origin;
-                done(undefined, _package);
+                var assets = service.toJSON();
+                assets.origin = origin;
+                done(undefined, assets);
             }
         });
     });

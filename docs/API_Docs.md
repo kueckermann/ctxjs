@@ -5,9 +5,9 @@
 CTX.Service Class // Reference to the Service class.
 CTX.Module Class // Reference to the Module class.
 CTX.config Object // Global CTX configuration options.
-	↳ verbose Boolean (false) // Turn on or off verbose logs.
-	↳ cache Boolean (true) // Disable caching for all services.
-	↳ root String ($CWD) // The root directory for CTX
+	↳ verbose Boolean false) // Turn on or off verbose logs.
+	↳ cache Boolean true // Disable caching for all services.
+	↳ root String $CWD // The root directory for CTX
 
 CTX.start Function ([path String, options Object, callback Function]) // Starts a new Service instance.
 CTX.listen Function (arg0 Number|Server) // Attach socket.io listener to a server or port.

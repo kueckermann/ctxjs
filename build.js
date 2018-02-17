@@ -11,11 +11,11 @@ gulp.src([
 'src/nodejs/**',
 ]).pipe(gulp.dest('./build'));
 
-gulp.src([
-'src/cli/**',
-'!src/cli/node_modules/',
-'!src/cli/node_modules/**',
-]).pipe(gulp.dest('./build/cli'));
+// gulp.src([
+// 'src/cli/**',
+// '!src/cli/node_modules/',
+// '!src/cli/node_modules/**',
+// ]).pipe(gulp.dest('./build/cli'));
 
 gulp.src('./src/browser/index.js')
 .pipe(browserify())

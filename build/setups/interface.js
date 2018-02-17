@@ -21,7 +21,6 @@ require('./localhost.js');
 
 
 // Functions
-// fs gets local implementations
 CTX._fs = {
     readFile : function(){}
 }
@@ -60,7 +59,6 @@ CTX._generateId = function(arg){
 }
 
 var proto_reg = /^\w+:\/{2,}/;
-// Path tools are similar to nodejs but are used for parsing url based paths.
 CTX._path = {
     join : function(a, b){
         var args = toArray(arguments);
@@ -151,33 +149,46 @@ CTX.start = function start(){
         done = arguments[2];
     }
 
-    options.path = '/'+CTX._path.normalize(options.path).replace(/^\//, ''));
+    options.path = '/'+CTX._path.normalize(options.path).replace(/^\//g, '');
 
     var socket = CTX.connect(options.origin);
     var events = new Emitter();
 
     process.nextTick(function(){
-        var cache_id;
-        if(options.unique !== true){
-            // If unique is not requested than check if there is already a service
-            // running with name or path.
+        var reference;
 
-            cache_id = CTX._generateId((options.origin || '')+':'+(options.group || options.path));
+        // Check if a service is already running via the discrete reference.
+        // The default is unless is to use the same discrete reference unless
+        // true is specified or a different discrete reference.
 
-            if(CTX.start._cache[cache_id]){
-                done(undefined, CTX.start._cache[cache_id]);
+        if(options.reference !== false){
+            reference = CTX._generateId((options.origin || '')+':'+(options.reference || options.path));
+            delete options.reference; // Dont pass reference to onwards.
+
+            if(CTX.Service._reference[reference]){
+                var service = CTX.Service._reference[reference];
+                events.emit('complete', undefined, service);
+                events.emit('success', service);
+                events.off();
+                done(undefined, service);
                 return;
             }
-            // If no service is running with the id than request a new service.
         }
 
-        socket.emit('__CTX__START', options, function(error, _package){
+        // Fetch service package
+        if(options.cache !== false && CTX.config.cache === true && CTX.Service._cache[options.path]){
+            // Look up cached assets
+            startService(undefined, CTX.Service._cache[options.path]);
+        }else{
+            socket.emit('__CTX__START', options, startService);
+        }
+
+        function startService(error, assets){
             var service;
             if(!error){
                 try{
-                    service = new CTX.Service(_package);
-                    var data = _package.data || options.data;
-                    service.data = data !== undefined ? data : {};
+                    options.assets = assets;
+                    service = new CTX.Service(options);
                 }catch(caught){
                     error = caught;
                 }
@@ -190,20 +201,19 @@ CTX.start = function start(){
                 done(error);
                 return;
             }else{
-                if(cache_id) CTX.start._cache[cache_id] = service;
-
+                if(reference) CTX.Service._reference[reference] = service;
                 events.emit('success', service);
             }
+            events.off();
 
             service.on('running', function(error){
                 done(error, service);
             });
-        });
+        }
     });
 
     return events;
 }
-CTX.start._cache = {};
 
 CTX.connect = function(origin){
     origin = typeof origin == 'string' ? parseuri(origin).source : '';

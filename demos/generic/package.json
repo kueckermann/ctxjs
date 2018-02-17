@@ -4,7 +4,7 @@
   "description": "",
   "author": "",
   "scripts": {
-    "chrome": "chrome --new-window \"${PWD}/index.html\" --allow-file-access-from-files",
+    "chrome": "chrome --new-window ${PWD}/index.html --allow-file-access-from-files",
     "build": "build.sh",
     "scrape": "ctx scrape http://generic-app-1aefab.webflow.io --verbose --asset-root=\".\""
   },

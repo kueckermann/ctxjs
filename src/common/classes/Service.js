@@ -6,36 +6,49 @@ var io = require('socket.io-client');
 
 var pseudo_emitter = new Emitter();
 
-function Service(_package){ // _package contains all relevant assets for the service.
+function Service(options){ // assets contains all relevant assets for the service.
 	Emitter.apply(this);
 	var self = this;
-	_package = _package instanceof Object ? _package : {};
 
-	if(!Service._cache[_package.path] && CTX.config.cache){
+	options = options instanceof Object ? options : {};
+	options.assets = options.assets instanceof Object ? options.assets : {};
+
+	var assets = options.assets;
+
+	if(!Service._cache[assets.path] && CTX.config.cache){
 		// Store a cached version of the supplied package.
-		Service._cache[_package.path] = _package;
+		Service._cache[assets.path] = assets;
 	}
 
 	// Immutable properties
 	Object.defineProperty(this, 'path', {
-		value: typeof _package.path == 'string' ? _package.path : ""
+		value: typeof assets.path == 'string' ? assets.path : ""
 	});
 
 	Object.defineProperty(this, 'origin', {
-		value: typeof _package.origin == 'string' ? _package.origin : ''
+		value: typeof assets.origin == 'string' ? assets.origin : ''
 	});
 
-	Object.defineProperty(this, '_context', {
-		value: _package._context == 'foreground' ? 'foreground' : 'background'
+	Object.defineProperty(this, 'context', {
+		value: assets.context == 'remote' ? 'remote' : 'local'
 	});
 
-	Object.defineProperty(this, '_package', {
-		value : _package,
+	Object.defineProperty(this, 'assets', {
+		value : assets,
 	});
 
 	Object.defineProperty(this, '_id', {
-		value : typeof _package._id == 'string' ? _package._id : CTX._generateId(),
+		value : typeof assets._id == 'string' ? assets._id : CTX._generateId()
 	});
+
+	Object.defineProperty(this, '_flags', {
+		value : {
+			created : false,
+			started : false,
+			stopped : false,
+		}
+	});
+
 
 	Object.defineProperty(this, '_protocol', {
 		get: function(){
@@ -91,13 +104,7 @@ function Service(_package){ // _package contains all relevant assets for the ser
 	});
 	this._socket 	= null; // Force setting of socket
 
-	this._flags		= {
-		created : false,
-		started : false,
-		stopped : false,
-	}
-
-	var data = {};
+	var data = options.data instanceof Object ? options.data : {};
 	Object.defineProperty(this, 'data', {
 		get : function(){
 			return data;
@@ -113,29 +120,31 @@ function Service(_package){ // _package contains all relevant assets for the ser
 	process.nextTick(function(){
 		self._socket.emit('__CTX__CONNECT', self._id);
 
-		switch(typeof _package.controller){
+		var controller = assets.controllers[self.context];
+
+		switch(typeof controller){
 			case 'function': break;
+
+			// The following cases will update the package so that the parsing
+			// is stored in the cache.
 			case 'string':
-				// The string gets updated in the package causing it to update
-				// also in the cache. So next time it won't need to re-evaluate.
 				try{
-					_package.controller = new Function('require', 'global', 'process', _package.controller);
+				 	controller = new Function('require', 'global', 'process', controller);
 				}catch(error){
 					console.error('CTX: Failed to evaluate controller for "'+self.path+'".');
 
 					if(CTX.config.verbose) console.error(error);
 					else console.error(error.message);
 
-					_package.controller = new Function("");
+					controller = new Function("");
 				}
+				assets.controllers[self.context] = controller;
 				break;
 			default:
-	        	_package.controller = new Function("");
-			break;
-
+	        	controller = new Function("");
+				assets.controllers[self.context] = controller;
+				break;
 		}
-
-		// controller.displayName = self.name;
 
 		async.series({
 			create : function(cb){
@@ -184,6 +193,7 @@ Service.prototype.constructor = Service;
 
 Service._cache = {};
 Service._running = {};
+Service._reference = {};
 
 Service.prototype.stop = function(transmit){
 	if(!this._flags.stopped){
@@ -217,9 +227,9 @@ Service.prototype.require = function(requests, done){
 		}
 	}
 
-	switch(this._context){
-		case 'foreground':
-			// Request from background socket.
+	switch(this.context){
+		case 'remote':
+			// Request from local socket.
 			this._socket.emit('__CTX__REQUIRE', requests, function(errors, requests){
 				// parse requests into CTX.Modules and compile
 				for(var key in requests){
@@ -228,7 +238,7 @@ Service.prototype.require = function(requests, done){
 				compileModules(errors, requests);
 			});
 		break;
-		case 'background':
+		case 'local':
 			// Emit on self so that the localhost require protocol
 			// will handle the task.
 			pseudo_emitter.emit.call(this._socket, '__CTX__REQUIRE', requests, compileModules);
@@ -257,21 +267,19 @@ Service.prototype.require = function(requests, done){
 	}
 }
 
-Service.prototype.toInterface = function(){
-	return new Service(this.toJSON());
-}
-
 Service.prototype.toJSON = function(){
-	var _package = {
+	var assets = {
 		_id : this._id,
-		_context : 'foreground',
+		context : 'remote',
 		origin : this.origin,
 		path : this.path,
-		controller : this._package.controllers.foreground,
+		controllers : {
+			remote : this.assets.controllers.remote,
+		},
 		data : this.data,
 	}
 
-	return _package;
+	return assets;
 }
 
 Service.prototype.toString = function(){

@@ -6800,31 +6800,49 @@ var io = require('socket.io-client');
 
 var pseudo_emitter = new Emitter();
 
-function Service(_package){ // _package contains all relevant assets for the service.
+function Service(options){ // assets contains all relevant assets for the service.
 	Emitter.apply(this);
 	var self = this;
-	_package = _package instanceof Object ? _package : {};
+
+	options = options instanceof Object ? options : {};
+	options.assets = options.assets instanceof Object ? options.assets : {};
+
+	var assets = options.assets;
+
+	if(!Service._cache[assets.path] && CTX.config.cache){
+		// Store a cached version of the supplied package.
+		Service._cache[assets.path] = assets;
+	}
 
 	// Immutable properties
 	Object.defineProperty(this, 'path', {
-		value: typeof _package.path == 'string' ? _package.path : ""
+		value: typeof assets.path == 'string' ? assets.path : ""
 	});
 
 	Object.defineProperty(this, 'origin', {
-		value: typeof _package.origin == 'string' ? _package.origin : ''
+		value: typeof assets.origin == 'string' ? assets.origin : ''
 	});
 
-	Object.defineProperty(this, '_context', {
-		value: _package._context == 'foreground' ? 'foreground' : 'background'
+	Object.defineProperty(this, 'context', {
+		value: assets.context == 'remote' ? 'remote' : 'local'
 	});
 
-	Object.defineProperty(this, '_package', {
-		value : _package,
+	Object.defineProperty(this, 'assets', {
+		value : assets,
 	});
 
 	Object.defineProperty(this, '_id', {
-		value : typeof _package._id == 'string' ? _package._id : CTX._generateId(),
+		value : typeof assets._id == 'string' ? assets._id : CTX._generateId()
 	});
+
+	Object.defineProperty(this, '_flags', {
+		value : {
+			created : false,
+			started : false,
+			stopped : false,
+		}
+	});
+
 
 	Object.defineProperty(this, '_protocol', {
 		get: function(){
@@ -6880,19 +6898,13 @@ function Service(_package){ // _package contains all relevant assets for the ser
 	});
 	this._socket 	= null; // Force setting of socket
 
-	this._flags		= {
-		created : false,
-		started : false,
-		stopped : false,
-	}
-
-	var data = {};
+	var data = options.data instanceof Object ? options.data : {};
 	Object.defineProperty(this, 'data', {
 		get : function(){
 			return data;
 		},
 		set : function(set_data) {
-			data = set_data !== undefined ? set_data : data;
+			data = !(set_data instanceof Object) ? set_data : data;
 		}
 	});
 
@@ -6901,13 +6913,17 @@ function Service(_package){ // _package contains all relevant assets for the ser
 	var self = this;
 	process.nextTick(function(){
 		self._socket.emit('__CTX__CONNECT', self._id);
-		var controller = _package.controller;
 
-		switch(typeof _package.controller){
+		var controller = assets.controllers[self.context];
+
+		switch(typeof controller){
 			case 'function': break;
+
+			// The following cases will update the package so that the parsing
+			// is stored in the cache.
 			case 'string':
 				try{
-					controller = new Function('require', 'global', 'process', controller);
+				 	controller = new Function('require', 'global', 'process', controller);
 				}catch(error){
 					console.error('CTX: Failed to evaluate controller for "'+self.path+'".');
 
@@ -6916,14 +6932,13 @@ function Service(_package){ // _package contains all relevant assets for the ser
 
 					controller = new Function("");
 				}
+				assets.controllers[self.context] = controller;
 				break;
 			default:
 	        	controller = new Function("");
-			break;
-
+				assets.controllers[self.context] = controller;
+				break;
 		}
-
-		// controller.displayName = self.name;
 
 		async.series({
 			create : function(cb){
@@ -6972,6 +6987,7 @@ Service.prototype.constructor = Service;
 
 Service._cache = {};
 Service._running = {};
+Service._reference = {};
 
 Service.prototype.stop = function(transmit){
 	if(!this._flags.stopped){
@@ -7005,9 +7021,9 @@ Service.prototype.require = function(requests, done){
 		}
 	}
 
-	switch(this._context){
-		case 'foreground':
-			// Request from background socket.
+	switch(this.context){
+		case 'remote':
+			// Request from local socket.
 			this._socket.emit('__CTX__REQUIRE', requests, function(errors, requests){
 				// parse requests into CTX.Modules and compile
 				for(var key in requests){
@@ -7016,7 +7032,7 @@ Service.prototype.require = function(requests, done){
 				compileModules(errors, requests);
 			});
 		break;
-		case 'background':
+		case 'local':
 			// Emit on self so that the localhost require protocol
 			// will handle the task.
 			pseudo_emitter.emit.call(this._socket, '__CTX__REQUIRE', requests, compileModules);
@@ -7045,21 +7061,19 @@ Service.prototype.require = function(requests, done){
 	}
 }
 
-Service.prototype.toInterface = function(){
-	return new Service(this.toJSON());
-}
-
 Service.prototype.toJSON = function(){
-	var _package = {
+	var assets = {
 		_id : this._id,
-		_context : 'foreground',
+		context : 'remote',
 		origin : this.origin,
 		path : this.path,
-		controller : this._package.controllers.foreground,
+		controllers : {
+			remote : this.assets.controllers.remote,
+		},
 		data : this.data,
 	}
 
-	return _package;
+	return assets;
 }
 
 Service.prototype.toString = function(){
@@ -7222,33 +7236,46 @@ CTX.start = function start(){
         done = arguments[2];
     }
 
-    options.path = '/'+(options.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, ''));
+    options.path = '/'+CTX._path.normalize(options.path).replace(/^\//g, '');
 
     var socket = CTX.connect(options.origin);
     var events = new Emitter();
 
     process.nextTick(function(){
-        var cache_id;
-        if(options.unique !== true){
-            // If unique is not requested than check if there is already a service
-            // running with name or path.
+        var reference;
 
-            cache_id = CTX._generateId((options.origin || '')+':'+(options.group || options.path));
+        // Check if a service is already running via the discrete reference.
+        // The default is unless is to use the same discrete reference unless
+        // true is specified or a different discrete reference.
 
-            if(CTX.start._cache[cache_id]){
-                done(undefined, CTX.start._cache[cache_id]);
+        if(options.reference !== false){
+            reference = CTX._generateId((options.origin || '')+':'+(options.reference || options.path));
+            delete options.reference; // Dont pass reference to onwards.
+
+            if(CTX.Service._reference[reference]){
+                var service = CTX.Service._reference[reference];
+                events.emit('complete', undefined, service);
+                events.emit('success', service);
+                events.off();
+                done(undefined, service);
                 return;
             }
-            // If no service is running with the id than request a new service.
         }
 
-        socket.emit('__CTX__START', options, function(error, _package){
+        // Fetch service package
+        if(options.cache !== false && CTX.config.cache === true && CTX.Service._cache[options.path]){
+            // Look up cached assets
+            startService(undefined, CTX.Service._cache[options.path]);
+        }else{
+            socket.emit('__CTX__START', options, startService);
+        }
+
+        function startService(error, assets){
             var service;
             if(!error){
                 try{
-                    service = new CTX.Service(_package);
-                    var data = _package.data || options.data;
-                    service.data = data !== undefined ? data : {};
+                    options.assets = assets;
+                    service = new CTX.Service(options);
                 }catch(caught){
                     error = caught;
                 }
@@ -7261,20 +7288,19 @@ CTX.start = function start(){
                 done(error);
                 return;
             }else{
-                if(cache_id) CTX.start._cache[cache_id] = service;
-
+                if(reference) CTX.Service._reference[reference] = service;
                 events.emit('success', service);
             }
+            events.off();
 
             service.on('running', function(error){
                 done(error, service);
             });
-        });
+        }
     });
 
     return events;
 }
-CTX.start._cache = {};
 
 CTX.connect = function(origin){
     origin = typeof origin == 'string' ? parseuri(origin).source : '';
@@ -7320,9 +7346,9 @@ localhost.on('__CTX__REQUIRE', function(requests, done){
 });
 
 localhost.on('__CTX__START', function(options, done){
-    var _package = CTX.Service._cache[options.path];
-    if(_package && CTX.config.cache !== false){
-        done(null, _package);
+    var assets = CTX.Service._cache[options.path];
+    if(assets && CTX.config.cache !== false){
+        done(null, assets);
     }else{
         // Need to remove any protocols and add them back later.
         var base_path = CTX._path.join(CTX.config.path, options.path);
@@ -7333,39 +7359,39 @@ localhost.on('__CTX__START', function(options, done){
                 return;
             }
 
-            var _descriptor = {};
+            var descriptor = {};
             try{
-                _descriptor = JSON.parse(file);
+                descriptor = JSON.parse(file);
             }catch(error){
                 done(error);
                 return;
             }
 
-            var _package = {
+            var assets = {
                 path    : options.path,
+                descriptor : descriptor,
                 controllers : {},
-                _descriptor : _descriptor
             }
 
-            _descriptor.controllers = _descriptor.controllers instanceof Object ? _descriptor.controllers : {};
+            descriptor.controllers = descriptor.controllers instanceof Object ? descriptor.controllers : {};
 
             async.parallel({
-                bg : function(cb){
-                    if(_descriptor.controllers.background){
-                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controllers.background), function(error, file){
+                local : function(cb){
+                    if(descriptor.controllers.local){
+                        CTX._fs.readFile(CTX._path.join(base_path, descriptor.controllers.local), function(error, file){
                             if(error){
-                                console.error('CTX: Failed to read controller for "'+_package.path+'".');
+                                console.error('CTX: Failed to read controller for "'+assets.path+'".');
                                 if(CTX.config.verbose) console.error(error);
                                 else console.error(error.message);
                             }else{
                                 try{
                                     if(!/sourceURL=/g.test(file)){
-                                        file += '\n//# sourceURL='+_package.path
+                                        file += '\n//# sourceURL='+CTX._path.join(assets.path, 'controller');
                                     }
 
-                                    _package.controllers.background = file;
+                                    assets.controllers.local = file;
                                 }catch(error){
-                                    console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
+                                    console.error('CTX: Failed to evaluate controller for "'+assets.path+'".');
                                     if(CTX.config.verbose) console.error(error);
                                     else console.error(error.message);
                                 }
@@ -7377,18 +7403,18 @@ localhost.on('__CTX__START', function(options, done){
                         cb();
                     }
                 },
-                fg : function(cb){
-                    if(_descriptor.controllers.foreground){
-                        CTX._fs.readFile(CTX._path.join(base_path, _descriptor.controllers.foreground), function(error, file){
+                remote : function(cb){
+                    if(descriptor.controllers.remote){
+                        CTX._fs.readFile(CTX._path.join(base_path, descriptor.controllers.remote), function(error, file){
                             if(error){
-                                console.error('CTX: Failed to read controller for "'+_package.path+'".');
+                                console.error('CTX: Failed to read controller for "'+assets.path+'".');
                                 if(CTX.config.verbose) console.error(error);
                                 else console.error(error.message);
                             }else{
                                 if(!/sourceURL=/g.test(file)){
-                                    file += '\n//# sourceURL='+_package.path;
+                                    file += '\n//# sourceURL='+CTX._path.join(assets.path, 'interface');
                                 }
-                                _package.controllers.foreground = file;
+                                assets.controllers.remote = file;
                             }
 
                             cb();
@@ -7401,16 +7427,7 @@ localhost.on('__CTX__START', function(options, done){
                 if(error){
                     done(error);
                 }else{
-                    try{
-                        _package.controller = new Function('require', 'global', 'process',_package.controllers.background);
-                    }catch(error){
-                        console.error('CTX: Failed to evaluate controller for "'+_package.path+'".');
-                        if(CTX.config.verbose) console.error(error);
-                        else console.error(error.message);
-                    }
-
-                    CTX.Service._cache[_package.path] = _package;
-                    done(undefined,  _package);
+                    done(undefined,  assets);
                 }
             });
         });
@@ -7433,14 +7450,14 @@ localhost.connect = function(socket){
         delete options.origin;
 
         // Force new incoming requests from clients to be unique.
-        options.unique = true;
+        options.reference = false;
         CTX.start(options, function(error, service){
             if(error){
                 done(error);
             }else{
-                var _package = service.toJSON();
-                _package.origin = origin;
-                done(undefined, _package);
+                var assets = service.toJSON();
+                assets.origin = origin;
+                done(undefined, assets);
             }
         });
     });

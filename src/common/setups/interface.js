@@ -149,7 +149,7 @@ CTX.start = function start(){
         done = arguments[2];
     }
 
-    options.path = '/'+(options.path.replace(/\\/g, '/').replace(/^\/+|\/+$/g, ''));
+    options.path = '/'+CTX._path.normalize(options.path).replace(/^\//g, '');
 
     var socket = CTX.connect(options.origin);
     var events = new Emitter();
@@ -161,11 +161,12 @@ CTX.start = function start(){
         // The default is unless is to use the same discrete reference unless
         // true is specified or a different discrete reference.
 
-        if(options.discrete && options.discrete !== true){
-            descrete_id = CTX._generateId((options.origin || '')+':'+(options.group || options.path));
+        if(options.reference !== false){
+            reference = CTX._generateId((options.origin || '')+':'+(options.reference || options.path));
+            delete options.reference; // Dont pass reference to onwards.
 
-            if(CTX.start._reference[reference]){
-                var service = CTX.start._reference[reference];
+            if(CTX.Service._reference[reference]){
+                var service = CTX.Service._reference[reference];
                 events.emit('complete', undefined, service);
                 events.emit('success', service);
                 events.off();
@@ -182,12 +183,12 @@ CTX.start = function start(){
             socket.emit('__CTX__START', options, startService);
         }
 
-        function startService(error, _package){
+        function startService(error, assets){
             var service;
             if(!error){
                 try{
-                    service = new CTX.Service(_package);
-                    service.data = _package.data || options.data;
+                    options.assets = assets;
+                    service = new CTX.Service(options);
                 }catch(caught){
                     error = caught;
                 }
@@ -200,7 +201,7 @@ CTX.start = function start(){
                 done(error);
                 return;
             }else{
-                if(reference) CTX.start._reference[reference] = service;
+                if(reference) CTX.Service._reference[reference] = service;
                 events.emit('success', service);
             }
             events.off();
@@ -213,7 +214,6 @@ CTX.start = function start(){
 
     return events;
 }
-CTX.start._reference = {};
 
 CTX.connect = function(origin){
     origin = typeof origin == 'string' ? parseuri(origin).source : '';

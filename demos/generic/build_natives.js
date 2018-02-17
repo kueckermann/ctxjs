@@ -1,4 +1,4 @@
-CTX.Module.natives['ctxjs-template'] = require('../../extensions/ctxjs-template');
+
 CTX.Module.natives['ctxjs-routing'] = require('../../extensions/ctxjs-routing');
 CTX.Module.natives['jquery'] = require('jquery');
 CTX.Module.natives['fastclick'] = require('fastclick');

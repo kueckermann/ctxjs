@@ -1,6 +1,6 @@
 {
     "template" : "./template.html",
     "controllers" : {
-        "background" : "./background.js"
+        "local" : "./local.js"
     }
 }
